@@ -1,1 +1,125 @@
-hi there, you're quite early!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Estrogen.charity/</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+
+  <style>
+    body, html {
+      margin: 0; padding: 0; height: 100vh; overflow: hidden;
+      font-family: 'Roboto', sans-serif;
+      color: white;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    }
+    video#bgVideo {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      object-fit: cover;
+      object-position: center;
+      z-index: -1;
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+      font-size: 2em;
+    }
+    .mute-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      padding: 10px 15px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    .mute-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <video id="bgVideo" muted loop autoplay>
+    <source src="portal.pyro.host-aff.php=3.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <audio id="bgAudio" loop>
+    <source src="pyro.host-is-amazing.mp3" type="audio/mpeg" />
+    Your browser does not support the audio tag.
+  </audio>
+
+  <div class="content">
+    <p>Hello there, you're quite early!</p>
+  </div>
+
+  <button id="muteBtn" class="mute-button">🔊</button>
+
+  <script>
+    const video = document.getElementById('bgVideo');
+    const audio = document.getElementById('bgAudio');
+    const muteBtn = document.getElementById('muteBtn');
+    let isMuted = false;
+
+    // Mute button functionality
+    muteBtn.addEventListener('click', () => {
+      if (isMuted) {
+        // Unmute
+        audio.muted = false;
+        muteBtn.textContent = '🔊';
+        isMuted = false;
+      } else {
+        // Mute
+        audio.muted = true;
+        muteBtn.textContent = '🔇';
+        isMuted = true;
+      }
+    });
+
+    // Auto-start video (this should work due to muted attribute)
+    video.play().catch(err => {
+      console.error('Video autoplay failed:', err);
+    });
+
+    // Debug video loading
+    video.addEventListener('loadstart', () => console.log('Video loading started'));
+    video.addEventListener('loadedmetadata', () => console.log('Video metadata loaded'));
+    video.addEventListener('canplay', () => console.log('Video can start playing'));
+    video.addEventListener('error', (e) => console.error('Video error:', e));
+
+    // Keep audio and video synced during playback
+    setInterval(() => {
+      if (!audio.paused && !video.paused) {
+        const diff = video.currentTime - audio.currentTime;
+        if (Math.abs(diff) > 0.3) {
+          audio.currentTime = video.currentTime;
+        }
+      }
+    }, 500);
+
+    // Try to auto-start audio immediately
+    setTimeout(() => {
+      audio.play().catch(() => {
+        // If audio fails, try again on any user interaction
+        document.addEventListener('click', () => {
+          audio.play();
+        }, { once: true });
+      });
+    }, 500);
+  </script>
+</body>
+</html>
